@@ -12,7 +12,7 @@ const Sidebar = () => {
   return (
     <div
       className={`h-screen fixed ${
-        sideBarStatus ? "w-[10rem]" : "w-[5rem] items-center"
+        sideBarStatus ? "w-[10vw]" : "w-[5rem] items-center"
       } bg-black flex flex-col justify-center gap-[3rem] px-4 transition-all ease-in-out duration-150 `}
     >
       {sidebarNav?.map((Element, id) => (
