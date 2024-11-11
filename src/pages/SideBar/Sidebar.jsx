@@ -16,8 +16,8 @@ const Sidebar = () => {
       } bg-black flex flex-col justify-center gap-[3rem] px-4 transition-all ease-in-out duration-150 `}
     >
       {sidebarNav?.map((Element, id) => (
-        <NavLink to={`/${Element.text}`} className={({isActive})=> `text-amber-400 ${isActive ? "text-red-500" : ""} ` } >
-          <div className="flex items-center gap-4 cursor-pointer " key={id}>
+        <NavLink key={id} to={`/${Element.text}`} className={({isActive})=> `text-amber-400 ${isActive ? "text-red-500" : ""} ` } >
+          <div className="flex items-center gap-4 cursor-pointer ">
             <p className="text-2xl">{<Element.icon />}</p>
             <p
               className={`text-sm transition-all ease-in-out duration-150 ${
