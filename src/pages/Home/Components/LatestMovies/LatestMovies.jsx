@@ -1,5 +1,5 @@
 //this is latest movies section but the API used in this section is actually calls upcoming movies.
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef } from "react";
 import axios from "axios";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
 const LatestMovies = () => {
@@ -19,24 +19,39 @@ const LatestMovies = () => {
     }
   };
 
+  const scrollBox = useRef()
+
+  const leftScroll = () =>{
+    if(scrollBox.current){
+        scrollBox.current.scrollLeft -= scrollBox.current.offsetWidth;
+    }
+  }
+
+  const rightScroll = () =>{
+    if(scrollBox.current){
+        scrollBox.current.scrollLeft += scrollBox.current.offsetWidth;
+    }
+  }
+
   useEffect(() => {
     getLatestMovies();
   }, []);
+
 
   return (
     <div className="px-10 py-3">
       <div className="flex justify-between" >
         <h1 className="text-amber-400 text-4xl">Latest Movies</h1>
         <div className="text-amber-400 flex items-center gap-2" >
-          <p className="text-2xl cursor-pointer" >
+          <p onClick={leftScroll} className="text-2xl cursor-pointer" >
             <FaChevronCircleLeft />
           </p>
-          <p className="text-2xl cursor-pointer" >
+          <p onClick={rightScroll} className="text-2xl cursor-pointer" >
             <FaChevronCircleRight />
           </p>
         </div>
       </div>
-      <div className="latestMovies my-3 flex gap-4 overflow-x-scroll">
+      <div ref={scrollBox} className="latestMovies my-3 flex gap-4 overflow-x-scroll scroll-smooth">
         {popularMovies?.map((Element, id) => (
           <div key={id}>
             <img
