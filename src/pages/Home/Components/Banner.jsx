@@ -1,104 +1,77 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import imdb from '../../../assets/imdb.svg';
+import React, { useEffect , useState , useRef } from 'react'
+import axios from 'axios';
+import { FaChevronCircleLeft , FaChevronCircleRight } from "react-icons/fa";
 
 const Banner = () => {
-  const baseUrl = import.meta.env.VITE_BASE_URL;
-  const api_key = import.meta.env.VITE_API_KEY;
 
-  const [trending, setTrending] = useState([]);
-  const [logos, setLogos] = useState({}); // Object to store logos for each item
+  const baseurl = import.meta.env.VITE_BASE_URL;
+  const apikey = import.meta.env.VITE_API_KEY;
 
-  const getTrending = async () => {
+  const [trendingShows, settrendingShows] = useState([])
+  const [logos, setLogos] = useState({})
+
+  const getLogos = async (media_type , id , lan) =>{
     try {
-      const response = await axios.get(
-        `${baseUrl}/trending/all/week?api_key=${api_key}`
-      );
-      setTrending(response.data.results);
+      const response = await axios(`${baseurl}/${media_type}/${id}/images?api_key=${apikey}`)
+      const logo = response.data.logos.find((e) => e.iso_639_1 === lan)
+      const logoPath = logo.file_path
+      setLogos((prevLogo) => (
+        {
+          ...prevLogo,
+          [id] : logoPath
+        }
+      ))
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
 
-      // Fetch logos for all items
-      response.data.results.forEach((item) => {
-        getLogo(item.media_type, item.id , item.original_language);
+  const getTrendindData = async () =>{
+    try {
+      const response = await axios.get(`${baseurl}/trending/all/week?api_key=${apikey}`)
+      const trending = response.data.results;
+      settrendingShows(trending)
+
+      trending.forEach(element => {
+        getLogos(element.media_type , element.id , element.original_language)
       });
     } catch (error) {
       console.log(error.message);
     }
-  };
+  }
 
-  const getLogo = async (type, id , lan) => {
-    try {
-      const response = await axios.get(
-        `${baseUrl}/${type}/${id}/images?api_key=${api_key}`
-      );
+  const banner = useRef()
 
-      // Find the English logo
-      const Logo = response.data.logos.find((logo) => logo.iso_639_1 === lan);
-      const logoPath = Logo.file_path
+  const leftScroll = () =>{
+    banner.current.scrollLeft -= banner.current.offsetWidth    
+  }
 
-      // Update the logos state
-      setLogos((prevLogos) => ({
-        ...prevLogos,
-        [id]: logoPath, // Store logo with the item's ID as the key
-      }));
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
+  const rightScroll = () => {
+    banner.current.scrollLeft += banner.current.offsetWidth    
+  }
 
-  useEffect(() => {
-    getTrending();
-  }, []);
+
+  useEffect(() =>{
+    getTrendindData()
+  },[])
 
   return (
-    <div className="banner h-screen flex overflow-x-auto overflow-y-hidden relative">
-      {trending.map((element) => (
-        <div key={element.id} className="banner-data h-screen min-w-full">
-          <img
-            className="w-full h-full object-cover"
-            src={`https://image.tmdb.org/t/p/original${element.backdrop_path}`}
-            alt={element.title || element.name}
-          />
-          <div className="banner-data absolute top-0 w-full h-screen flex items-center">
-            <div className="ml-[2%]">
-              {/* Display Logo */}
-              {logos[element.id] ? (
-                <img
-                  src={`https://image.tmdb.org/t/p/original${logos[element.id]}`}
-                  alt="Logo"
-                  className="w-[30rem]"
-                />
-              ) : (
-                <p className="text-gray-400">Loading logo...</p>
-              )}
-
-              <p className="text-white w-[40%] opacity-70 my-6">{element.overview}</p>
-
-              <footer className="flex items-end gap-5 my-5">
-                <div>
-                  <img className="h-8" src={imdb} alt="IMDB" />
-                  <p className="text-gray-300">
-                    <span className="text-amber-400 text-4xl">{`${element.vote_average}`.slice(0, 3)}</span> / 10
-                  </p>
-                </div>
-                <div>
-                  <p className="text-white capitalize font-semibold text-xl">{element.media_type}</p>
-                </div>
-                <div>
-                  <p className="text-white capitalize font-semibold text-xl">{element.original_language}</p>
-                </div>
-              </footer>
-              <div className="flex gap-2 mt-5">
-                <button className="bg-amber-400 px-10 py-1 rounded-lg">Watch Now</button>
-                <button className="border border-amber-400 px-10 py-1 rounded-lg text-amber-400">
-                  Add to Watch List
-                </button>
-              </div>
+    <div className='relative'>
+        <p onClick={leftScroll} className='absolute z-10 text-white text-3xl top-[50%] left-4' ><FaChevronCircleLeft/></p>
+      <div ref={banner} className='banner h-screen flex overflow-scroll relative scroll-smooth' >
+        {trendingShows?.map((Element , id) =>(
+          <div className='h-screen min-w-full' key={id} >
+            <img className='w-full h-full object-cover' src={`https://image.tmdb.org/t/p/original${Element.backdrop_path}`} alt="" />
+            <div className='banner-data absolute w-full h-screen top-0 flex items-center pl-16' >
+              <img className='w-[20rem]' src={`https://image.tmdb.org/t/p/original${logos[Element.id]}`} alt="" />
             </div>
           </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+        ))}
+      </div>
+      <p onClick={rightScroll} className='absolute z-10 text-white text-3xl top-[50%] right-4' ><FaChevronCircleRight/></p>
 
-export default Banner;
+    </div>
+  )
+}
+
+export default Banner
