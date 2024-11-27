@@ -68,7 +68,9 @@ const Banner = () => {
             <div className='banner-data absolute w-full h-screen top-0 flex items-center pl-16' >
               <div>
               <img className='w-[25rem]' src={`https://image.tmdb.org/t/p/original${logos[Element.id]}`} alt="" />
-              <p className='text-gray-300 w-[35%] my-8' >{Element.overview}</p>
+              <p className='text-gray-300 w-[35%] my-8' >
+                {`${Element.overview}`.length > 300 ? `${Element.overview}`.slice(0 , 300) + "...more" : Element.overview}
+              </p>
               <footer className='flex items-end gap-12' >
                 <div>
                   <img className='w-8' src={imdb} alt="" />
