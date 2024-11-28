@@ -2,6 +2,7 @@ import React from 'react'
 import { useSelector } from 'react-redux'
 import Banner from './Components/Banner'
 import LatestMovies from './Components/LatestMovies/LatestMovies'
+import PopularMovies from './Components/PopularMovies/PopularMovies'
 
 const Home = () => {
 
@@ -12,6 +13,7 @@ const Home = () => {
       <div className='h-screen'>
         <Banner/>
         <LatestMovies/>
+        <PopularMovies/>
       </div>
     </div>
   )

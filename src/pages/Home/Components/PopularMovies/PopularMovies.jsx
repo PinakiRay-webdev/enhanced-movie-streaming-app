@@ -1,8 +1,9 @@
-//this is latest movies section but the API used in this section is actually calls upcoming movies.
+
 import React, { useState, useEffect , useRef } from "react";
 import axios from "axios";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
-const LatestMovies = () => {
+
+const PopularMovies = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const apiKey = import.meta.env.VITE_API_KEY;
 
@@ -11,7 +12,7 @@ const LatestMovies = () => {
   const getLatestMovies = async () => {
     try {
       const response = await axios.get(
-        `${baseUrl}/movie/upcoming?api_key=${apiKey}`
+        `${baseUrl}/movie/popular?api_key=${apiKey}`
       );
       setPopularMovies(response.data.results);
     } catch (error) {
@@ -41,7 +42,7 @@ const LatestMovies = () => {
   return (
     <div className="px-10 py-3">
       <div className="flex justify-between" >
-        <h1 className="text-amber-400 text-4xl">Latest Movies</h1>
+        <h1 className="text-amber-400 text-4xl">Popular Movies</h1>
         <div className="text-amber-400 flex items-center gap-2" >
           <p onClick={leftScroll} className="text-2xl cursor-pointer" >
             <FaChevronCircleLeft />
@@ -69,4 +70,4 @@ const LatestMovies = () => {
   );
 };
 
-export default LatestMovies;
+export default PopularMovies;
