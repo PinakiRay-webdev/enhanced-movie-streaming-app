@@ -8,12 +8,17 @@ import Sports from './pages/Sports/Sports'
 import Radio from './pages/Radio/Radio'
 import Login from './Auth/Login/Login'
 import SignUp from './Auth/SignUp/SignUp'
+import UserProfile from './Components/Profile/UserProfile'
 const App = () => {
 
   const router = createBrowserRouter([
     {
       path : '/',
       element : <Navigate to="/home" replace={true} />
+    },
+    {
+      path : '/profile',
+      element : <><Sidebar/><UserProfile/></>
     },
     {
       path : '/home',

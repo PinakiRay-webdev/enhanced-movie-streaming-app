@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { ToastContainer , toast } from "react-toastify";
 import 'react-toastify/ReactToastify.css'
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../utils/Firebase/firebase";
 
 const Login = () => {
 
@@ -38,8 +40,19 @@ const Login = () => {
       }, 1500);
     }).then(() =>{
       toast.dismiss()
-      toast.success('logged in successfully' , {theme : 'dark' , position : 'top-left'})
-      console.log(data)
+      signInWithEmailAndPassword(auth , data.mail , data.password).then((userCredentails) =>{
+        const user = userCredentails.user
+        toast.success('logged in successfully' , {theme : 'dark' , position : 'top-left'})
+        localStorage.setItem('accountCredentials' , JSON.stringify({
+          mail : user.email
+        }))
+        setTimeout(() => {
+          navigate('/home')
+        }, 1000);
+      }).catch((error) =>{
+        toast.dismiss()
+        toast.error(error.message , {theme : 'dark' , position : 'top-left'})
+      })
       reset()
     })
   }
