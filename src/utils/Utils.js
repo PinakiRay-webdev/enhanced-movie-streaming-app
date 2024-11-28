@@ -8,11 +8,6 @@ import { GoHome } from "react-icons/go";
 
 export const sidebarNav = [
     {
-        id : 1,
-        icon : TiUser,
-        text : "Login"
-    },
-    {
         id : 7,
         icon : GoHome,
         text : "Home"
