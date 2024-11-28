@@ -1,12 +1,13 @@
 import React from 'react'
 import { createBrowserRouter , RouterProvider , Navigate} from 'react-router-dom'
-import Sidebar from './pages/SideBar/Sidebar'
+import Sidebar from './Components/SideBar/Sidebar'
 import Home from './pages/Home/Home'
-import Auth from './Auth/Auth'
 import Movies from './pages/Movies/Movies'
 import TvShows from './pages/TV shows/TvShows'
 import Sports from './pages/Sports/Sports'
 import Radio from './pages/Radio/Radio'
+import Login from './Auth/Login/Login'
+import SignUp from './Auth/SignUp/SignUp'
 const App = () => {
 
   const router = createBrowserRouter([
@@ -20,7 +21,11 @@ const App = () => {
     },
     {
       path : '/login',
-      element : <> <Sidebar/><Auth/> </>
+      element : <> <Sidebar/><Login/> </>
+    },
+    {
+      path : '/signUp',
+      element : <> <Sidebar/><SignUp/> </>
     },
     {
       path : '/movies',
