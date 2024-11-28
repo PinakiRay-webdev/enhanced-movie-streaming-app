@@ -29,7 +29,7 @@ const LatestMovies = () => {
 
   const rightScroll = () =>{
     if(scrollBox.current){
-        scrollBox.current.scrollLeft += scrollBox.current.offsetWidth;
+        scrollBox.current.scrollLeft += scrollBox.current.offsetWidth-100; //for proper adjustments
     }
   }
 
