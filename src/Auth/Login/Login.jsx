@@ -7,20 +7,24 @@ import { PiEyesLight } from "react-icons/pi";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { ToastContainer , toast } from "react-toastify";
-import 'react-toastify/ReactToastify.css'
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/ReactToastify.css";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 import { auth } from "../../utils/Firebase/firebase";
 
 const Login = () => {
-
   const {
     register,
     handleSubmit,
-    formState : {errors , isSubmitting},
-    reset
-  } = useForm()
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm();
 
+  const provider = new GoogleAuthProvider();
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -32,30 +36,81 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const formSubmit = async (data) =>{
-    toast.loading('Logging....' , {theme : 'dark' , position : 'top-left'})
-    await new Promise((resolve) =>{
+  const googleSignIn = async () => {
+    toast.loading("logging with google...", {
+      theme: "dark",
+      position: "top-left",
+    });
+    await new Promise((resolve) => {
       setTimeout(() => {
-        resolve()
+        resolve();
       }, 1500);
-    }).then(() =>{
-      toast.dismiss()
-      signInWithEmailAndPassword(auth , data.mail , data.password).then((userCredentails) =>{
-        const user = userCredentails.user
-        toast.success('logged in successfully' , {theme : 'dark' , position : 'top-left'})
-        localStorage.setItem('accountCredentials' , JSON.stringify({
-          mail : user.email
-        }))
-        setTimeout(() => {
-          navigate('/home')
-        }, 1000);
-      }).catch((error) =>{
-        toast.dismiss()
-        toast.error(error.message , {theme : 'dark' , position : 'top-left'})
-      })
-      reset()
-    })
-  }
+    }).then(() => {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          const user = result.user;
+          toast.dismiss();
+          toast.success("Logged in successfully with google", {
+            theme: "dark",
+            position: "top-left",
+          });
+          localStorage.setItem(
+            "accountCredentials",
+            JSON.stringify({
+              mail: user.email,
+              dp: user.photoURL,
+            })
+          );
+          setTimeout(() => {
+            navigate('/home')
+          }, 1000);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          const email = error.customData.email;
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          toast.dismiss()
+          toast.error(error.message , {theme : 'dark' , position : 'top-left'})
+        });
+    });
+  };
+
+  const formSubmit = async (data) => {
+    toast.loading("Logging....", { theme: "dark", position: "top-left" });
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1500);
+    }).then(() => {
+      toast.dismiss();
+      signInWithEmailAndPassword(auth, data.mail, data.password)
+        .then((userCredentails) => {
+          const user = userCredentails.user;
+          toast.success("logged in successfully", {
+            theme: "dark",
+            position: "top-left",
+          });
+          localStorage.setItem(
+            "accountCredentials",
+            JSON.stringify({
+              mail: user.email,
+              dp : null
+            })
+          );
+          setTimeout(() => {
+            navigate("/home");
+          }, 1000);
+        })
+        .catch((error) => {
+          toast.dismiss();
+          toast.error(error.message, { theme: "dark", position: "top-left" });
+        });
+      reset();
+    });
+  };
 
   return (
     <div
@@ -74,35 +129,51 @@ const Login = () => {
             </p>
 
             {/* login form   */}
-            <form onSubmit={handleSubmit(formSubmit)} >
-              <fieldset className={`border-2 ${errors.mail ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}>
-                <legend className={`text-sm font-semibold ${errors.mail ? "text-red-500" : "text-green-700"} px-1`}>
+            <form onSubmit={handleSubmit(formSubmit)}>
+              <fieldset
+                className={`border-2 ${
+                  errors.mail ? "border-red-500" : "border-green-700"
+                } px-4 py-2 rounded-md`}
+              >
+                <legend
+                  className={`text-sm font-semibold ${
+                    errors.mail ? "text-red-500" : "text-green-700"
+                  } px-1`}
+                >
                   {errors.mail ? errors.mail.message : "Email address"}
                 </legend>
                 <input
-                {...register('mail' , {
-                  required : {
-                    value : true,
-                    message : 'This field is required'
-                  }
-                })}
+                  {...register("mail", {
+                    required: {
+                      value: true,
+                      message: "This field is required",
+                    },
+                  })}
                   className="outline-none"
                   type="email"
                   placeholder="abc@example.com"
                 />
               </fieldset>
-              <fieldset className={`border-2 ${errors.password ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md mt-4`}>
-                <legend className={`text-sm font-semibold ${errors.password ? "text-red-500" : "text-green-700"} px-1`}>
-                {errors.mail ? errors.password.message : "Password"}
+              <fieldset
+                className={`border-2 ${
+                  errors.password ? "border-red-500" : "border-green-700"
+                } px-4 py-2 rounded-md mt-4`}
+              >
+                <legend
+                  className={`text-sm font-semibold ${
+                    errors.password ? "text-red-500" : "text-green-700"
+                  } px-1`}
+                >
+                  {errors.mail ? errors.password.message : "Password"}
                 </legend>
                 <div className="flex justify-between items-center">
                   <input
-                  {...register('password' , {
-                    required : {
-                      value : true,
-                      message : 'This field is required'
-                    }
-                  })}
+                    {...register("password", {
+                      required: {
+                        value: true,
+                        message: "This field is required",
+                      },
+                    })}
                     className="outline-none"
                     type={isPasswordVisible ? "text" : "password"}
                     placeholder="*********"
@@ -133,7 +204,7 @@ const Login = () => {
 
             <div>
               {/* login with google  */}
-              <div className="flex items-center bg-green-100 py-2 justify-center gap-5 border border-green-600 rounded-md cursor-pointer">
+              <div onClick={googleSignIn} className="flex items-center bg-green-100 py-2 justify-center gap-5 border border-green-600 rounded-md cursor-pointer">
                 <img className="w-8" src={google} alt="" />
                 <p>Log in with Google</p>
               </div>
@@ -160,7 +231,7 @@ const Login = () => {
           <img className="w-full h-full object-cover" src={loginBg} alt="" />
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };

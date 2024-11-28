@@ -11,6 +11,8 @@ const UserProfile = () => {
 
   const user = JSON.parse(localStorage.getItem("accountCredentials"));
 
+  const userProfileImageLink = user.dp
+
   const navigate = useNavigate()
 
   const logout = async () =>{
@@ -34,6 +36,8 @@ const UserProfile = () => {
     })
   }
 
+ 
+
   return (
     <div className="w-full h-fit">
       <div
@@ -43,8 +47,8 @@ const UserProfile = () => {
       >
         <header className="flex items-end justify-between" >
           <div className="flex items-center gap-5">
-            <p className="text-white text-4xl font-light py-1 px-4 border rounded-full">
-              {`${user.mail}`.split("").join("").charAt(0)}
+            <p className="text-white text-4xl font-light rounded-full">
+              {userProfileImageLink !== null ? <img loading="lazy" className="w-18 rounded-full" src={userProfileImageLink}/> : `${user.mail}`.split("").join("").charAt(0) }
             </p>
             <p className="text-white text-2xl">{user.mail}</p>
           </div>
