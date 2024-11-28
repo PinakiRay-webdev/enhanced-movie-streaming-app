@@ -6,14 +6,39 @@ import facebook from "../../assets/facebook.svg";
 import { PiEyesLight } from "react-icons/pi";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const SignUp = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm();
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const formSubmit = async (data) => {
+    toast.loading("Logging....", { theme: "dark", position: "top-left" });
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1500);
+    }).then(() => {
+      toast.dismiss();
+      toast.success("logged in successfully", {
+        theme: "dark",
+        position: "top-left",
+      });
+      console.log(data);
+      reset();
+    });
   };
 
   const navigate = useNavigate();
@@ -30,29 +55,45 @@ const SignUp = () => {
           <div className="w-[50%]">
             <h1 className="text-5xl font-semibold text-center">Join us 🚀</h1>
             <p className="opacity-60 text-sm text-center my-4">
-            Step into the spotlight of cinematic wonders. <br />
-            Register now and start your movie adventure!
+              Step into the spotlight of cinematic wonders. <br />
+              Register now and start your movie adventure!
             </p>
 
             {/* login form   */}
-            <form>
+            <form onSubmit={handleSubmit(formSubmit)}>
               {/* first name and last name */}
               <div className="flex gap-3">
-                <fieldset className="border-2 border-green-600 px-4 py-2 rounded-md">
-                  <legend className="text-sm font-semibold text-green-700 px-1">
-                    First 
+                <fieldset
+                  className={`border-2 ${errors.firstname ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}
+                >
+                  <legend
+                    className={`text-sm font-semibold ${errors.firstname ? "text-red-500" : "text-green-700"} px-1`}
+                  >
+                    {errors.firstname ? errors.firstname.message : "First name"}
                   </legend>
                   <input
+                    {...register("firstname", {
+                      required: {
+                        value: true,
+                        message: "First name is required",
+                      },
+                    })}
                     className="outline-none w-full"
                     type="email"
                     placeholder="Anuj"
                   />
                 </fieldset>
-                <fieldset className="border-2 border-green-600 px-4 py-2 rounded-md">
-                  <legend className="text-sm font-semibold text-green-700 px-1">
-                    Last name
+                <fieldset className={`border-2 ${errors.lastname ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}>
+                  <legend className={`text-sm font-semibold ${errors.lastname ? "text-red-500" : "text-green-700"} px-1`}>
+                  {errors.lastname ? errors.lastname.message : "border-green-700"}
                   </legend>
                   <input
+                    {...register("lastname", {
+                      required: {
+                        value: true,
+                        message: "Last name is required",
+                      },
+                    })}
                     className="outline-none w-full"
                     type="email"
                     placeholder="raval"
@@ -60,22 +101,34 @@ const SignUp = () => {
                 </fieldset>
               </div>
 
-              <fieldset className="border-2 border-green-600 px-4 py-2 rounded-md mt-3">
-                <legend className="text-sm font-semibold text-green-700 px-1">
-                  Email Address
+              <fieldset className={`border-2 ${errors.mail ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md mt-3`}>
+                <legend className={`text-sm font-semibold ${errors.mail ? "text-red-500" : "text-green-700"} px-1`}>
+                {errors.firstname ? errors.firstname.message : "Mail Address"}
                 </legend>
                 <input
+                  {...register("mail", {
+                    required: {
+                      value: true,
+                      message: "Email address is required",
+                    },
+                  })}
                   className="outline-none"
                   type="email"
                   placeholder="abc@example.com"
                 />
               </fieldset>
-              <fieldset className="border-2 border-green-600 px-4 py-2 rounded-md mt-4">
-                <legend className="text-sm font-semibold text-green-700 px-1">
-                  Password
+              <fieldset className={`border-2 ${errors.password ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md mt-4`}>
+                <legend className={`text-sm font-semibold ${errors.password ? "text-red-500" : "text-green-700"} px-1`}>
+                {errors.password ? errors.password.message : "Password"}
                 </legend>
                 <div className="flex justify-between items-center">
                   <input
+                    {...register("password", {
+                      required: {
+                        value: true,
+                        message: "Password is required",
+                      },
+                    })}
                     className="outline-none"
                     type={isPasswordVisible ? "text" : "password"}
                     placeholder="*********"
@@ -89,7 +142,7 @@ const SignUp = () => {
                 </div>
               </fieldset>
               <button className="bg-green-700 w-full mt-6 py-2 text-white rounded-md">
-                Log In
+                Sign up
               </button>
             </form>
 

@@ -6,8 +6,20 @@ import facebook from "../../assets/facebook.svg";
 import { PiEyesLight } from "react-icons/pi";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { ToastContainer , toast } from "react-toastify";
+import 'react-toastify/ReactToastify.css'
 
 const Login = () => {
+
+  const {
+    register,
+    handleSubmit,
+    formState : {errors , isSubmitting},
+    reset
+  } = useForm()
+
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
@@ -17,6 +29,20 @@ const Login = () => {
   };
 
   const navigate = useNavigate();
+
+  const formSubmit = async (data) =>{
+    toast.loading('Logging....' , {theme : 'dark' , position : 'top-left'})
+    await new Promise((resolve) =>{
+      setTimeout(() => {
+        resolve()
+      }, 1500);
+    }).then(() =>{
+      toast.dismiss()
+      toast.success('logged in successfully' , {theme : 'dark' , position : 'top-left'})
+      console.log(data)
+      reset()
+    })
+  }
 
   return (
     <div
@@ -35,23 +61,35 @@ const Login = () => {
             </p>
 
             {/* login form   */}
-            <form>
-              <fieldset className="border-2 border-green-600 px-4 py-2 rounded-md">
-                <legend className="text-sm font-semibold text-green-700 px-1">
-                  Email Address
+            <form onSubmit={handleSubmit(formSubmit)} >
+              <fieldset className={`border-2 ${errors.mail ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}>
+                <legend className={`text-sm font-semibold ${errors.mail ? "text-red-500" : "text-green-700"} px-1`}>
+                  {errors.mail ? errors.mail.message : "Email address"}
                 </legend>
                 <input
+                {...register('mail' , {
+                  required : {
+                    value : true,
+                    message : 'This field is required'
+                  }
+                })}
                   className="outline-none"
                   type="email"
                   placeholder="abc@example.com"
                 />
               </fieldset>
-              <fieldset className="border-2 border-green-600 px-4 py-2 rounded-md mt-4">
-                <legend className="text-sm font-semibold text-green-700 px-1">
-                  Password
+              <fieldset className={`border-2 ${errors.password ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md mt-4`}>
+                <legend className={`text-sm font-semibold ${errors.password ? "text-red-500" : "text-green-700"} px-1`}>
+                {errors.mail ? errors.password.message : "Password"}
                 </legend>
                 <div className="flex justify-between items-center">
                   <input
+                  {...register('password' , {
+                    required : {
+                      value : true,
+                      message : 'This field is required'
+                    }
+                  })}
                     className="outline-none"
                     type={isPasswordVisible ? "text" : "password"}
                     placeholder="*********"
@@ -109,6 +147,7 @@ const Login = () => {
           <img className="w-full h-full object-cover" src={loginBg} alt="" />
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };
