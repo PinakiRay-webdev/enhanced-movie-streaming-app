@@ -12,6 +12,7 @@ const Sidebar = () => {
 
   const user = JSON.parse(localStorage.getItem('accountCredentials'))
 
+
   return (
     <div
       className={`h-screen fixed ${
@@ -33,6 +34,7 @@ const Sidebar = () => {
         </p>
       </div>
       </NavLink>
+
 
       {sidebarNav?.map((Element, id) => (
         <NavLink

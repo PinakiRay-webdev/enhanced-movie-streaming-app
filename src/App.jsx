@@ -51,7 +51,7 @@ const App = () => {
   ])
 
   return (
-    <div className='bg-black' >     
+    <div className='bg-[#000814]' >     
       <RouterProvider router={router} />
     </div>
   )
