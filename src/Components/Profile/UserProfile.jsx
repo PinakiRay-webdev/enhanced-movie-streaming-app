@@ -1,9 +1,38 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import {auth} from '../../utils/Firebase/firebase'
+import { useNavigate } from "react-router-dom";
+import { toast , ToastContainer } from "react-toastify";
+import 'react-toastify/ReactToastify.css'
+
 const UserProfile = () => {
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
 
   const user = JSON.parse(localStorage.getItem("accountCredentials"));
+
+  const navigate = useNavigate()
+
+  const logout = async () =>{
+    toast.loading('logging you out' , {theme : 'dark'})
+    await new Promise((resolve) =>{
+      setInterval(() => {
+        resolve()
+      }, 1500); 
+    }).then(() =>{
+      signOut(auth).then(() =>{
+        toast.dismiss();
+        toast.success('logged out successfully' , {theme : 'dark'})
+        localStorage.clear()
+        setTimeout(() => {
+          navigate('/home')
+        }, 1000);
+      }).catch((error) =>{
+        toast.dismiss()
+        toast.error(error.message , {theme : 'dark'})
+      })
+    })
+  }
 
   return (
     <div className="w-full h-fit">
@@ -22,7 +51,7 @@ const UserProfile = () => {
 
           <div className="flex gap-5">
             <button className=" bg-amber-500 px-6 py-1 rounded-md" >Suscribe</button>
-            <button className="text-amber-500 border border-amber-500 px-6 py-1 rounded-md" >Logout</button>
+            <button onClick={logout} className="text-amber-500 border border-amber-500 px-6 py-1 rounded-md" >Logout</button>
           </div>
         </header>
 
@@ -32,6 +61,7 @@ const UserProfile = () => {
           </header>
         </main>
       </div>
+      <ToastContainer/>
     </div>
   );
 };
