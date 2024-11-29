@@ -2,13 +2,15 @@ import React, { useEffect , useState , useRef } from 'react'
 import axios from 'axios';
 import { FaChevronCircleLeft , FaChevronCircleRight } from "react-icons/fa";
 import { CiCalendarDate } from "react-icons/ci";
-
+import { useDispatch } from 'react-redux';
 
 import imdb from '../../../assets/imdb.svg'
+import { addToWishList } from '../../../Redux/Slice/preferenceSlice';
 const Banner = () => {
 
   const baseurl = import.meta.env.VITE_BASE_URL;
   const apikey = import.meta.env.VITE_API_KEY;
+  const dispatch = useDispatch()
 
   const [trendingShows, settrendingShows] = useState([])
   const [logos, setLogos] = useState({})
@@ -53,6 +55,14 @@ const Banner = () => {
     banner.current.scrollLeft += banner.current.offsetWidth    
   }
 
+  const addToWishListCart = (id , name) =>{
+    const show = {
+      showId : id,
+      showName : name
+    }
+
+    dispatch(addToWishList(show))
+  }
 
   useEffect(() =>{
     getTrendindData()
@@ -92,7 +102,7 @@ const Banner = () => {
               </footer>
               <div className='flex gap-6 mt-8' >
                 <button className='bg-white py-1 px-4 rounded-full' >Watch now</button>
-                <button className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
+                <button onClick={() =>addToWishListCart(Element.id , Element.title || Element.name)} className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
               </div>
               </div>
             </div>
