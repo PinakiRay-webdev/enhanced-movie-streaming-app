@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import Banner from "./Components/Banner";
 import LatestMovies from "./Components/LatestMovies/LatestMovies";
 import PopularMovies from "./Components/PopularMovies/PopularMovies";
+import TopRated from "./Components/TopRated/TopRated";
 
 const Home = () => {
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
@@ -17,6 +18,7 @@ const Home = () => {
         <Banner />
         <LatestMovies />
         <PopularMovies />
+        <TopRated/>
       </div>
     </div>
   );
