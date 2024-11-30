@@ -7,6 +7,10 @@ import { PiEyesLight } from "react-icons/pi";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import { toast , ToastContainer } from "react-toastify";
+import 'react-toastify/ReactToastify.css'
+import { createUserWithEmailAndPassword , GoogleAuthProvider , signInWithPopup } from "firebase/auth";
+import { auth } from "../../utils/Firebase/firebase";
 
 const SignUp = () => {
   const {
@@ -25,19 +29,27 @@ const SignUp = () => {
   };
 
   const formSubmit = async (data) => {
-    toast.loading("Logging....", { theme: "dark", position: "top-left" });
+    toast.loading("Logging....", { theme: "dark", });
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, 1500);
     }).then(() => {
-      toast.dismiss();
-      toast.success("logged in successfully", {
-        theme: "dark",
-        position: "top-left",
-      });
-      console.log(data);
-      reset();
+      createUserWithEmailAndPassword(auth , data.mail , data.password).then((userCredentials) =>{
+        const user = userCredentials.user;
+        toast.dismiss();
+        toast.success('Account registered successfully' , {theme : 'dark'})
+        localStorage.setItem('accountCredentials' , JSON.stringify({
+          mail : user.email
+        }))
+        reset()
+        setTimeout(() => {
+          navigate('/home')
+        }, 1000);
+      }).catch((error) =>{
+        toast.dismiss()
+        toast.error(error.message , {theme : 'dark'})
+      })
     });
   };
 
@@ -79,13 +91,13 @@ const SignUp = () => {
                       },
                     })}
                     className="outline-none w-full"
-                    type="email"
+                    type="text"
                     placeholder="Anuj"
                   />
                 </fieldset>
                 <fieldset className={`border-2 ${errors.lastname ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}>
                   <legend className={`text-sm font-semibold ${errors.lastname ? "text-red-500" : "text-green-700"} px-1`}>
-                  {errors.lastname ? errors.lastname.message : "border-green-700"}
+                  {errors.lastname ? errors.lastname.message : "Last Name"}
                   </legend>
                   <input
                     {...register("lastname", {
@@ -95,7 +107,7 @@ const SignUp = () => {
                       },
                     })}
                     className="outline-none w-full"
-                    type="email"
+                    type="text"
                     placeholder="raval"
                   />
                 </fieldset>
@@ -141,8 +153,8 @@ const SignUp = () => {
                   </p>
                 </div>
               </fieldset>
-              <button className="bg-green-700 w-full mt-6 py-2 text-white rounded-md">
-                Sign up
+              <button className={`bg-green-700 w-full mt-6 py-2 text-white rounded-md ${isSubmitting && "opacity-60 cursor-not-allowed"}`} disabled = {isSubmitting}>
+                  {isSubmitting ? "Signing..." : "Sign Up"}
               </button>
             </form>
 
@@ -181,6 +193,7 @@ const SignUp = () => {
           <img className="w-full h-full object-cover" src={loginBg} alt="" />
         </div>
       </div>
+      <ToastContainer/>
     </div>
   );
 };
