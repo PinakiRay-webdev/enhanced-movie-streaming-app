@@ -68,7 +68,7 @@ const Banner = () => {
     })
   }
   
-  const addToWishList = async (id , name) =>{
+  const addToWishList = async (id , name , poster) =>{
     try {
       if(!sessionID){
         throw new Error('Please log in first!!')
@@ -76,7 +76,8 @@ const Banner = () => {
 
       const shows = {
         showID : id,
-        showName : name
+        showName : name,
+        showPoster : poster
       }
 
       const wishlistRef = doc(db , 'wishlists' , sessionID.sessionID)
@@ -142,7 +143,7 @@ const Banner = () => {
               </footer>
               <div className='flex gap-6 mt-8' >
                 <button className='bg-white py-1 px-4 rounded-full' >Watch now</button>
-                <button onClick={() => addToWishList(Element.id , Element.name || Element.title)} className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
+                <button onClick={() => addToWishList(Element.id , Element.name || Element.title , Element.poster_path)} className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
               </div>
               </div>
             </div>

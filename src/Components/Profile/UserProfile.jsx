@@ -5,6 +5,7 @@ import { auth } from "../../utils/Firebase/firebase";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { doc, getDoc } from "firebase/firestore";
+import { MdDelete } from "react-icons/md";
 import { db } from "../../utils/Firebase/firebase";
 import "react-toastify/ReactToastify.css";
 
@@ -58,7 +59,7 @@ const UserProfile = () => {
       <div
         className={`profile ${
           sidebarStatus ? "pl-[12vw]" : "pl-[7rem]"
-        } py-8 h-screen transition-all ease-in-out duration-150 pr-8`}
+        } py-8 h-full transition-all ease-in-out duration-150 pr-8`}
       >
         <header className="flex items-end justify-between">
           <div className="flex items-center gap-5">
@@ -93,10 +94,14 @@ const UserProfile = () => {
           <header className="border-b border-gray-600" >
             <p className="text-blue-600 font-semibold text-lg">Wishlist</p>
           </header>
-          <main>
+          <main className="grid grid-cols-5 gap-5 py-4" >
             {wishlist.map((Element , id) =>(
-              <div key={id} >
-                <p className="text-white" >{Element.showName}</p>
+              <div className="w-fit" key={id} >
+                <img className="w-48 border border-gray-400 rounded-md" src={`https://image.tmdb.org/t/p/w500${Element.showPoster}`} alt="" />
+                <div className="flex items-center justify-between mt-4" >
+                <p className="text-sm text-amber-400" >{Element.showName}</p>
+                <p className="text-amber-400" ><MdDelete/></p>
+                </div>
               </div>  
             ))}
           </main>
