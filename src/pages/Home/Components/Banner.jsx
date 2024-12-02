@@ -110,7 +110,7 @@ const Banner = () => {
   },[])
 
   return (
-    <div className='relative'>
+    <div className='relative border'>
         <p onClick={leftScroll} className='absolute z-10 text-white text-3xl top-[50%] left-4' ><FaChevronCircleLeft/></p>
       <div ref={banner} className='banner h-screen flex overflow-scroll relative scroll-smooth' >
         {trendingShows?.map((Element , id) =>(

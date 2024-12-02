@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useReducer, useState } from "react";
 import { useSelector } from "react-redux";
 import loginBg from "../../assets/loginBG.svg";
 import google from "../../assets/google.svg";
@@ -30,9 +30,51 @@ const SignUp = () => {
 
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
 
+  const provider = new GoogleAuthProvider()
+
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+
+  const googleSignIn = async () =>{
+    toast.loading('registering using google...' , {theme : 'dark' , position : 'top-right'})
+    await new Promise((resolve) =>{
+      setTimeout(() => {
+        resolve()
+      }, 1500);
+    }).then(() =>{
+      signInWithPopup(auth, provider)
+  .then((result) => {
+    const credential = GoogleAuthProvider.credentialFromResult(result);
+    const token = credential.accessToken;
+    const user = result.user;
+    localStorage.setItem('accountCredentials' , JSON.stringify({
+      mail : user.email,
+      sessionID : user.uid,
+      dp : user.photoURL
+    }))
+
+    addDoc(collection(db , "users") , {
+      Email : user.email,
+      SessionID : user.uid,
+      name : user.displayName
+    })
+
+    toast.dismiss();
+    toast.success('Registered successfully' , {theme : 'dark' , position : 'top-right'})
+    setTimeout(() => {
+      navigate('/home')
+    }, 1000);
+  }).catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    const email = error.customData.email;
+    const credential = GoogleAuthProvider.credentialFromError(error);
+    toast.dismiss();
+    toast.error(error.message , {theme  : 'dark' , position : 'top-right'})
+  });
+    })
+  }
 
   const formSubmit = async (data) => {
     toast.loading("Logging....", { theme: "dark" });
@@ -219,7 +261,7 @@ const SignUp = () => {
 
             <div className="flex gap-4">
               {/* login with google  */}
-              <div className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full">
+              <div onClick={googleSignIn} className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full">
                 <img className="w-8 mx-auto" src={google} alt="" />
               </div>
               <div className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full">
