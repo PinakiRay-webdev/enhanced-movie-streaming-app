@@ -17,7 +17,7 @@ const initialState = {
     isLoading : false,
     isError : false
 }
- 
+
 
 export const preferenceSlice = createSlice({
     name : 'list',

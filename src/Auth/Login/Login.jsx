@@ -97,7 +97,8 @@ const Login = () => {
             "accountCredentials",
             JSON.stringify({
               mail: user.email,
-              dp : null
+              dp : null,
+              sessionID : user.uid
             })
           );
           setTimeout(() => {

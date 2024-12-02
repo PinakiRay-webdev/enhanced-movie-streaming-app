@@ -3,14 +3,21 @@ import axios from 'axios';
 import { FaChevronCircleLeft , FaChevronCircleRight } from "react-icons/fa";
 import { CiCalendarDate } from "react-icons/ci";
 import { useDispatch } from 'react-redux';
-
+import { useNavigate } from 'react-router-dom';
+import { toast , ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import imdb from '../../../assets/imdb.svg'
 import { addToWishList } from '../../../Redux/Slice/preferenceSlice';
+import { setDoc , doc, getDoc, updateDoc, addDoc, arrayUnion, collection } from 'firebase/firestore';
+import { db } from '../../../utils/Firebase/firebase';
+
 const Banner = () => {
 
   const baseurl = import.meta.env.VITE_BASE_URL;
   const apikey = import.meta.env.VITE_API_KEY;
   const dispatch = useDispatch()
+  const sessionID = JSON.parse(localStorage.getItem('accountCredentials'))
+  const navigate = useNavigate()
 
   const [trendingShows, settrendingShows] = useState([])
   const [logos, setLogos] = useState({})
@@ -55,14 +62,52 @@ const Banner = () => {
     banner.current.scrollLeft += banner.current.offsetWidth    
   }
 
-  const addToWishListCart = (id , name) =>{
-    const show = {
-      showId : id,
-      showName : name
-    }
+  // button to add show to wishlist 
 
-    dispatch(addToWishList(show))
+  const delay = () =>{
+    return new Promise((resolve) =>{
+      setTimeout(() => {
+        resolve()
+      }, 1500);
+    })
   }
+
+  const addToWishListCart = async (id, name) => {
+    try {
+      if (!sessionID) {
+        throw new Error("Please log in first");
+      }
+  
+      const shows = {
+        showID : id,
+        showName : name
+      }
+
+      const wishlistRef = doc(db , "wishlists" , sessionID.sessionID)
+      const wishlistSnap = await getDoc(wishlistRef)
+
+      if(wishlistSnap.exists()){
+        await updateDoc(wishlistRef , {
+          lists : arrayUnion(shows)          
+        })
+      } else {
+        await setDoc(wishlistRef , {
+          userID : sessionID.sessionID,
+          lists : [shows]
+        })
+      }
+  
+      toast.promise(delay, {
+        pending: 'Adding to wishlist',
+        success: 'Added to wishlist',
+        error: 'Unable to add to wishlist',
+      }, {
+        theme: 'dark',
+      });
+    } catch (error) {
+      toast.error(error.message, { theme: 'dark' });
+    }
+  };
 
   useEffect(() =>{
     getTrendindData()
@@ -110,7 +155,7 @@ const Banner = () => {
         ))}
       </div>
       <p onClick={rightScroll} className='absolute z-10 text-white text-3xl top-[50%] right-4' ><FaChevronCircleRight/></p>
-
+      <ToastContainer/>
     </div>
   )
 }

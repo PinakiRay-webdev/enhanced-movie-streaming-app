@@ -9,6 +9,8 @@ import Radio from './pages/Radio/Radio'
 import Login from './Auth/Login/Login'
 import SignUp from './Auth/SignUp/SignUp'
 import UserProfile from './Components/Profile/UserProfile'
+import { ToastContainer } from 'react-toastify'
+
 const App = () => {
 
   const router = createBrowserRouter([
@@ -53,6 +55,7 @@ const App = () => {
   return (
     <div className='bg-[#000814]' >     
       <RouterProvider router={router} />
+      <ToastContainer/>
     </div>
   )
 }

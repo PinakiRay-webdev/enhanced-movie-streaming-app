@@ -7,10 +7,16 @@ import { PiEyesLight } from "react-icons/pi";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import { toast , ToastContainer } from "react-toastify";
-import 'react-toastify/ReactToastify.css'
-import { createUserWithEmailAndPassword , GoogleAuthProvider , signInWithPopup } from "firebase/auth";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { addDoc , collection } from "firebase/firestore";
 import { auth } from "../../utils/Firebase/firebase";
+import { db } from "../../utils/Firebase/firebase";
 
 const SignUp = () => {
   const {
@@ -29,27 +35,39 @@ const SignUp = () => {
   };
 
   const formSubmit = async (data) => {
-    toast.loading("Logging....", { theme: "dark", });
+    toast.loading("Logging....", { theme: "dark" });
     await new Promise((resolve) => {
       setTimeout(() => {
         resolve();
       }, 1500);
     }).then(() => {
-      createUserWithEmailAndPassword(auth , data.mail , data.password).then((userCredentials) =>{
-        const user = userCredentials.user;
-        toast.dismiss();
-        toast.success('Account registered successfully' , {theme : 'dark'})
-        localStorage.setItem('accountCredentials' , JSON.stringify({
-          mail : user.email
-        }))
-        reset()
-        setTimeout(() => {
-          navigate('/home')
-        }, 1000);
-      }).catch((error) =>{
-        toast.dismiss()
-        toast.error(error.message , {theme : 'dark'})
-      })
+      createUserWithEmailAndPassword(auth, data.mail, data.password)
+        .then((userCredentials) => {
+          const user = userCredentials.user;
+          toast.dismiss();
+          toast.success("Account registered successfully", { theme: "dark" });
+          localStorage.setItem(
+            "accountCredentials",
+            JSON.stringify({
+              mail: user.email,
+              sessionID : user.uid
+            })
+          );
+          addDoc(collection(db , "users") , {
+            userID : user.uid,
+            FirstName : data.firstname,
+            LastName : data.lastname,
+            Email : data.mail
+          })
+          reset();
+          setTimeout(() => {
+            navigate("/home");
+          }, 1000);
+        })
+        .catch((error) => {
+          toast.dismiss();
+          toast.error(error.message, { theme: "dark" });
+        });
     });
   };
 
@@ -76,10 +94,14 @@ const SignUp = () => {
               {/* first name and last name */}
               <div className="flex gap-3">
                 <fieldset
-                  className={`border-2 ${errors.firstname ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}
+                  className={`border-2 ${
+                    errors.firstname ? "border-red-500" : "border-green-700"
+                  } px-4 py-2 rounded-md`}
                 >
                   <legend
-                    className={`text-sm font-semibold ${errors.firstname ? "text-red-500" : "text-green-700"} px-1`}
+                    className={`text-sm font-semibold ${
+                      errors.firstname ? "text-red-500" : "text-green-700"
+                    } px-1`}
                   >
                     {errors.firstname ? errors.firstname.message : "First name"}
                   </legend>
@@ -95,9 +117,17 @@ const SignUp = () => {
                     placeholder="Anuj"
                   />
                 </fieldset>
-                <fieldset className={`border-2 ${errors.lastname ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md`}>
-                  <legend className={`text-sm font-semibold ${errors.lastname ? "text-red-500" : "text-green-700"} px-1`}>
-                  {errors.lastname ? errors.lastname.message : "Last Name"}
+                <fieldset
+                  className={`border-2 ${
+                    errors.lastname ? "border-red-500" : "border-green-700"
+                  } px-4 py-2 rounded-md`}
+                >
+                  <legend
+                    className={`text-sm font-semibold ${
+                      errors.lastname ? "text-red-500" : "text-green-700"
+                    } px-1`}
+                  >
+                    {errors.lastname ? errors.lastname.message : "Last Name"}
                   </legend>
                   <input
                     {...register("lastname", {
@@ -113,9 +143,17 @@ const SignUp = () => {
                 </fieldset>
               </div>
 
-              <fieldset className={`border-2 ${errors.mail ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md mt-3`}>
-                <legend className={`text-sm font-semibold ${errors.mail ? "text-red-500" : "text-green-700"} px-1`}>
-                {errors.firstname ? errors.firstname.message : "Mail Address"}
+              <fieldset
+                className={`border-2 ${
+                  errors.mail ? "border-red-500" : "border-green-700"
+                } px-4 py-2 rounded-md mt-3`}
+              >
+                <legend
+                  className={`text-sm font-semibold ${
+                    errors.mail ? "text-red-500" : "text-green-700"
+                  } px-1`}
+                >
+                  {errors.firstname ? errors.firstname.message : "Mail Address"}
                 </legend>
                 <input
                   {...register("mail", {
@@ -129,9 +167,17 @@ const SignUp = () => {
                   placeholder="abc@example.com"
                 />
               </fieldset>
-              <fieldset className={`border-2 ${errors.password ? "border-red-500" : "border-green-700"} px-4 py-2 rounded-md mt-4`}>
-                <legend className={`text-sm font-semibold ${errors.password ? "text-red-500" : "text-green-700"} px-1`}>
-                {errors.password ? errors.password.message : "Password"}
+              <fieldset
+                className={`border-2 ${
+                  errors.password ? "border-red-500" : "border-green-700"
+                } px-4 py-2 rounded-md mt-4`}
+              >
+                <legend
+                  className={`text-sm font-semibold ${
+                    errors.password ? "text-red-500" : "text-green-700"
+                  } px-1`}
+                >
+                  {errors.password ? errors.password.message : "Password"}
                 </legend>
                 <div className="flex justify-between items-center">
                   <input
@@ -153,8 +199,13 @@ const SignUp = () => {
                   </p>
                 </div>
               </fieldset>
-              <button className={`bg-green-700 w-full mt-6 py-2 text-white rounded-md ${isSubmitting && "opacity-60 cursor-not-allowed"}`} disabled = {isSubmitting}>
-                  {isSubmitting ? "Signing..." : "Sign Up"}
+              <button
+                className={`bg-green-700 w-full mt-6 py-2 text-white rounded-md ${
+                  isSubmitting && "opacity-60 cursor-not-allowed"
+                }`}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Signing..." : "Sign Up"}
               </button>
             </form>
 
@@ -193,7 +244,7 @@ const SignUp = () => {
           <img className="w-full h-full object-cover" src={loginBg} alt="" />
         </div>
       </div>
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };
