@@ -14,7 +14,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { auth } from "../../utils/Firebase/firebase";
+import { addDoc, collection } from "firebase/firestore";
+import { auth , db } from "../../utils/Firebase/firebase";
 
 const Login = () => {
   const {
@@ -61,6 +62,7 @@ const Login = () => {
             JSON.stringify({
               mail: user.email,
               dp: user.photoURL,
+              sessionID : user.uid
             })
           );
           setTimeout(() => {
