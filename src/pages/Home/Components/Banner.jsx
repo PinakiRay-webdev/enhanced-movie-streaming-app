@@ -2,25 +2,21 @@ import React, { useEffect , useState , useRef } from 'react'
 import axios from 'axios';
 import { FaChevronCircleLeft , FaChevronCircleRight } from "react-icons/fa";
 import { CiCalendarDate } from "react-icons/ci";
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { toast , ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import imdb from '../../../assets/imdb.svg'
-import { addToWishList } from '../../../Redux/Slice/preferenceSlice';
-import { setDoc , doc, getDoc, updateDoc, addDoc, arrayUnion, collection } from 'firebase/firestore';
-import { db } from '../../../utils/Firebase/firebase';
+import { setDoc , doc , updateDoc , arrayUnion, getDoc } from 'firebase/firestore';
+import {db} from '../../../utils/Firebase/firebase'
 
 const Banner = () => {
 
   const baseurl = import.meta.env.VITE_BASE_URL;
   const apikey = import.meta.env.VITE_API_KEY;
-  const dispatch = useDispatch()
-  const sessionID = JSON.parse(localStorage.getItem('accountCredentials'))
-  const navigate = useNavigate()
 
   const [trendingShows, settrendingShows] = useState([])
   const [logos, setLogos] = useState({})
+  const sessionID = JSON.parse(localStorage.getItem('accountCredentials'))
+  
 
   const getLogos = async (media_type , id , lan) =>{
     try {
@@ -62,8 +58,8 @@ const Banner = () => {
     banner.current.scrollLeft += banner.current.offsetWidth    
   }
 
-  // button to add show to wishlist 
-
+  // button to add show to wishlist
+  
   const delay = () =>{
     return new Promise((resolve) =>{
       setTimeout(() => {
@@ -71,24 +67,24 @@ const Banner = () => {
       }, 1500);
     })
   }
-
-  const addToWishListCart = async (id, name) => {
-    try {
-      if (!sessionID) {
-        throw new Error("Please log in first");
-      }
   
+  const addToWishList = async (id , name) =>{
+    try {
+      if(!sessionID){
+        throw new Error('Please log in first!!')
+      }
+
       const shows = {
         showID : id,
         showName : name
       }
 
-      const wishlistRef = doc(db , "wishlists" , sessionID.sessionID)
-      const wishlistSnap = await getDoc(wishlistRef)
+      const wishlistRef = doc(db , 'wishlists' , sessionID.sessionID)
+      const wishlistSnap = await getDoc(wishlistRef);
 
       if(wishlistSnap.exists()){
         await updateDoc(wishlistRef , {
-          lists : arrayUnion(shows)          
+          lists : arrayUnion(shows)
         })
       } else {
         await setDoc(wishlistRef , {
@@ -96,18 +92,17 @@ const Banner = () => {
           lists : [shows]
         })
       }
-  
-      toast.promise(delay, {
-        pending: 'Adding to wishlist',
-        success: 'Added to wishlist',
-        error: 'Unable to add to wishlist',
-      }, {
-        theme: 'dark',
-      });
+
+      toast.promise(delay , {
+        pending : 'adding to wishlist',
+        success : 'added to wishlist',
+        error : 'unable to add this time'
+      } , {theme : 'dark'})
+
     } catch (error) {
-      toast.error(error.message, { theme: 'dark' });
+      toast.error(error.message , {theme : 'dark'})
     }
-  };
+  }
 
   useEffect(() =>{
     getTrendindData()
@@ -147,7 +142,7 @@ const Banner = () => {
               </footer>
               <div className='flex gap-6 mt-8' >
                 <button className='bg-white py-1 px-4 rounded-full' >Watch now</button>
-                <button onClick={() =>addToWishListCart(Element.id , Element.title || Element.name)} className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
+                <button onClick={() => addToWishList(Element.id , Element.name || Element.title)} className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
               </div>
               </div>
             </div>
