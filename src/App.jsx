@@ -10,6 +10,7 @@ import Login from './Auth/Login/Login'
 import SignUp from './Auth/SignUp/SignUp'
 import UserProfile from './Components/Profile/UserProfile'
 import { ToastContainer } from 'react-toastify'
+import MovieDes from './pages/Description/Movie/MovieDes'
 
 const App = () => {
 
@@ -49,6 +50,10 @@ const App = () => {
     {
       path : '/radio',
       element : <> <Sidebar/><Radio/> </>
+    },
+    {
+      path : '/movie/:id',
+      element : <> <Sidebar/><MovieDes/> </>
     },
   ])
 

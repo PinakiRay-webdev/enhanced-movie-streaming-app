@@ -5,6 +5,7 @@ import { CiCalendarDate } from "react-icons/ci";
 import { toast , ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import imdb from '../../../assets/imdb.svg'
+import { useNavigate } from 'react-router-dom';
 import { setDoc , doc , updateDoc , arrayUnion, getDoc } from 'firebase/firestore';
 import {db} from '../../../utils/Firebase/firebase'
 
@@ -12,7 +13,7 @@ const Banner = () => {
 
   const baseurl = import.meta.env.VITE_BASE_URL;
   const apikey = import.meta.env.VITE_API_KEY;
-
+  const navigate = useNavigate();
   const [trendingShows, settrendingShows] = useState([])
   const [logos, setLogos] = useState({})
   const sessionID = JSON.parse(localStorage.getItem('accountCredentials'))
@@ -105,12 +106,16 @@ const Banner = () => {
     }
   }
 
+  const redirectToDes = (media_type , id) =>{
+      media_type === 'movie' ? navigate(`/movie/${id}`) : navigate(`/show/${id}`)
+  }
+
   useEffect(() =>{
     getTrendindData()
   },[])
 
   return (
-    <div className='relative border'>
+    <div className='relative'>
         <p onClick={leftScroll} className='absolute z-10 text-white text-3xl top-[50%] left-4' ><FaChevronCircleLeft/></p>
       <div ref={banner} className='banner h-screen flex overflow-scroll relative scroll-smooth' >
         {trendingShows?.map((Element , id) =>(
@@ -142,7 +147,7 @@ const Banner = () => {
                 </div>
               </footer>
               <div className='flex gap-6 mt-8' >
-                <button className='bg-white py-1 px-4 rounded-full' >Watch now</button>
+                <button onClick={() =>redirectToDes(Element.media_type , Element.id)} className='bg-white py-1 px-4 rounded-full' >Watch now</button>
                 <button onClick={() => addToWishList(Element.id , Element.name || Element.title , Element.poster_path)} className='watchList-btn text-white py-1 px-4 rounded-full' >Add to watch list</button>
               </div>
               </div>

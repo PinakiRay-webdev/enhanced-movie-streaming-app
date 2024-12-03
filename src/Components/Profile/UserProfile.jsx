@@ -59,7 +59,7 @@ const UserProfile = () => {
       <div
         className={`profile ${
           sidebarStatus ? "pl-[12vw]" : "pl-[7rem]"
-        } py-8 h-full transition-all ease-in-out duration-150 pr-8`}
+        } py-8 h-screen transition-all ease-in-out duration-150 pr-8`}
       >
         <header className="flex items-end justify-between">
           <div className="flex items-center gap-5">
