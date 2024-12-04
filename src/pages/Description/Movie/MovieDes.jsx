@@ -67,9 +67,14 @@ const MovieDes = () => {
             <div className='w-full h-full relative' >
                 <img className='w-full h-full object-cover' src={`https://image.tmdb.org/t/p/original${currentShow.backdrop_path}`} alt="" />
                 <div className='show-detail-banner absolute w-full h-full top-0 flex items-center pl-[14rem]' >
-                    <div className='flex gap-8' >
+                    <div className='flex gap-8 items-end' >
                         <img className='w-[18rem]' src={`https://image.tmdb.org/t/p/w500${currentShow.poster_path}`} alt="" />
                         <div>
+                            <header className='flex items-center gap-4 mb-4' >
+                                <p className='text-white font-bold opacity-60 text-xl' >{`${currentShow.release_date}`.slice(0,4)}</p>
+                                <p className='text-white opacity-60' >{`${currentShow.runtime}`.slice(0,4)} mins</p>
+                                <p className='text-white opacity-60 px-4 py-1 border rounded-full' >{currentShow.status}</p>
+                            </header>
                             <img className='w-[20vw]' src={`https://image.tmdb.org/t/p/original${titleImgLink?.file_path}`} alt="" />
                             <p className='text-white my-5 font-semibold' >{currentShow.tagline}</p>
                             <p className='text-white opacity-70 w-[45vw]' >{currentShow.overview}</p>
@@ -85,7 +90,7 @@ const MovieDes = () => {
                             </div>
 
                             {/* footer tag  */}
-                            <footer className='mt-12 flex items-end gap-8'>
+                            <footer className='mt-12 flex items-end justify-between'>
 
                                 {/* imdb rating  */}
                                 <div className='flex items-end gap-4' >
@@ -93,10 +98,16 @@ const MovieDes = () => {
                                 <img className='w-7' src={imdb} alt="" />
                                 </div>
 
+                                    {/* vote count  */}
+                                <div className='flex items-end gap-4' >
+                                    <p className='text-lime-400 text-4xl' >{currentShow.vote_count}<sup>+</sup></p>
+                                    <p className='text-white font-sans font-extralight' >Vote count</p>
+                                </div>
+
                                 {/* country of origin */}
                                 <div className='flex items-end gap-4' >
-                                    <p className='text-white font-sans font-extralight' >Country of Origin:</p>
                                     <p className='text-red-400 text-4xl' >{currentShow.origin_country}</p>
+                                    <p className='text-white font-sans font-extralight' >Based movie</p>
                                 </div>
                             </footer>
                         </div>

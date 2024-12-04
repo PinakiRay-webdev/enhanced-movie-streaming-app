@@ -2,6 +2,8 @@
 import React, { useState, useEffect , useRef } from "react";
 import axios from "axios";
 import { FaChevronCircleLeft, FaChevronCircleRight } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 const TopRated = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const apiKey = import.meta.env.VITE_API_KEY;
@@ -20,6 +22,7 @@ const TopRated = () => {
   };
 
   const scrollBox = useRef()
+  const navigate = useNavigate()
 
   const leftScroll = () =>{
     if(scrollBox.current){
@@ -53,7 +56,7 @@ const TopRated = () => {
       </div>
       <div ref={scrollBox} className="latestMovies my-3 flex gap-4 overflow-x-scroll scroll-smooth">
         {topRatedMovies?.map((Element, id) => (
-          <div key={id}>
+          <div onClick={() => navigate(`/movie/${Element.id}`)} className="cursor-pointer" key={id}>
             <img
               className="min-w-[11vw] rounded-md border border-gray-500"
               src={`https://image.tmdb.org/t/p/w500${Element.poster_path}`}
