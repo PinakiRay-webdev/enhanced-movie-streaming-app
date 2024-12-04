@@ -11,6 +11,7 @@ import SignUp from './Auth/SignUp/SignUp'
 import UserProfile from './Components/Profile/UserProfile'
 import { ToastContainer } from 'react-toastify'
 import MovieDes from './pages/Description/Movie/MovieDes'
+import TvShowDes from './pages/Description/Tv/TvShowDes'
 
 const App = () => {
 
@@ -54,6 +55,10 @@ const App = () => {
     {
       path : '/movie/:id',
       element : <> <Sidebar/><MovieDes/> </>
+    },
+    {
+      path : '/show/:id',
+      element : <> <Sidebar/><TvShowDes/> </>
     },
   ])
 
