@@ -1,4 +1,4 @@
-import React, { useReducer, useState } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import loginBg from "../../assets/loginBG.svg";
 import google from "../../assets/google.svg";
@@ -12,9 +12,10 @@ import "react-toastify/ReactToastify.css";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  FacebookAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { addDoc , collection } from "firebase/firestore";
+import { addDoc, arrayUnion, collection } from "firebase/firestore";
 import { auth } from "../../utils/Firebase/firebase";
 import { db } from "../../utils/Firebase/firebase";
 
@@ -30,51 +31,105 @@ const SignUp = () => {
 
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
 
-  const provider = new GoogleAuthProvider()
+  const googleAuthProvider = new GoogleAuthProvider();
+  const faceAuthProvider = new FacebookAuthProvider();
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const googleSignIn = async () =>{
-    toast.loading('registering using google...' , {theme : 'dark' , position : 'top-right'})
-    await new Promise((resolve) =>{
+  const facebookSignIn = async () => {
+    toast.loading("Signing with facebook...", {
+      theme: "dark",
+      position: "top-right",
+    });
+    await new Promise((resolve) => {
       setTimeout(() => {
-        resolve()
+        resolve();
       }, 1500);
-    }).then(() =>{
-      signInWithPopup(auth, provider)
-  .then((result) => {
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    const user = result.user;
-    localStorage.setItem('accountCredentials' , JSON.stringify({
-      mail : user.email,
-      sessionID : user.uid,
-      dp : user.photoURL
-    }))
+    }).then(() => {
+      signInWithPopup(auth, faceAuthProvider)
+        .then((result) => {
+          const user = result.user;
 
-    addDoc(collection(db , "users") , {
-      Email : user.email,
-      SessionID : user.uid,
-      name : user.displayName
-    })
+          // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+          const credential = FacebookAuthProvider.credentialFromResult(result);
+          const accessToken = credential.accessToken;
+          localStorage.setItem(
+            "accountCredentials",
+            JSON.stringify({
+              mail: user.email,
+              sessionID: user.uid,
+              dp: user.photoURL,
+            })
+          );
 
-    toast.dismiss();
-    toast.success('Registered successfully' , {theme : 'dark' , position : 'top-right'})
-    setTimeout(() => {
-      navigate('/home')
-    }, 1000);
-  }).catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    const email = error.customData.email;
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    toast.dismiss();
-    toast.error(error.message , {theme  : 'dark' , position : 'top-right'})
-  });
-    })
-  }
+          toast.dismiss()
+          toast.success('Logged in successfully' , {theme : 'dark' , position : 'top-right'})
+          setTimeout(()=>{
+            navigate('/home')
+          },1000)
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // The email of the user's account used.
+          const email = error.customData.email;
+          // The AuthCredential type that was used.
+          const credential = FacebookAuthProvider.credentialFromError(error);
+          toast.dismiss();
+          toast.error(errorMessage, { theme: "dark", position: "top-right" });
+          
+        });
+    });
+  };
+
+  const googleSignIn = async () => {
+    toast.loading("registering using google...", {
+      theme: "dark",
+      position: "top-right",
+    });
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 1500);
+    }).then(() => {
+      signInWithPopup(auth, googleAuthProvider)
+        .then((result) => {
+          const credential = GoogleAuthProvider.credentialFromResult(result);
+          const token = credential.accessToken;
+          const user = result.user;
+          localStorage.setItem(
+            "accountCredentials",
+            JSON.stringify({
+              mail: user.email,
+              sessionID: user.uid,
+              dp: user.photoURL,
+            })
+          );
+
+          toast.dismiss();
+          toast.success("Registered successfully", {
+            theme: "dark",
+            position: "top-right",
+          });
+          setTimeout(() => {
+            navigate("/home");
+          }, 1000);
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          const email = error.customData.email;
+          const credential = GoogleAuthProvider.credentialFromError(error);
+          toast.dismiss();
+          toast.error(error.message, { theme: "dark", position: "top-right" });
+        });
+    });
+  };
+
+  // registration using mail and password
 
   const formSubmit = async (data) => {
     toast.loading("Logging....", { theme: "dark" });
@@ -92,15 +147,15 @@ const SignUp = () => {
             "accountCredentials",
             JSON.stringify({
               mail: user.email,
-              sessionID : user.uid
+              sessionID: user.uid,
             })
           );
-          addDoc(collection(db , "users") , {
-            userID : user.uid,
-            FirstName : data.firstname,
-            LastName : data.lastname,
-            Email : data.mail
-          })
+          addDoc(collection(db, "users"), {
+            userID: user.uid,
+            FirstName: data.firstname,
+            LastName: data.lastname,
+            Email: data.mail,
+          });
           reset();
           setTimeout(() => {
             navigate("/home");
@@ -261,10 +316,13 @@ const SignUp = () => {
 
             <div className="flex gap-4">
               {/* login with google  */}
-              <div onClick={googleSignIn} className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full">
+              <div
+                onClick={googleSignIn}
+                className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full"
+              >
                 <img className="w-8 mx-auto" src={google} alt="" />
               </div>
-              <div className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full">
+              <div onClick={facebookSignIn} className="py-2 bg-green-100 gap-5 border border-green-600 rounded-md cursor-pointer w-full">
                 <img className="w-8 mx-auto" src={facebook} alt="" />
               </div>
             </div>
