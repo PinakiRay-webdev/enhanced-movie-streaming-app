@@ -5,6 +5,7 @@ import Progress from "../../../utils/Material UI/Progress Bar/Progress";
 import imdb from "../../../assets/imdb.svg";
 import axios from "axios";
 import ProductionCompanies from "./components/Production/ProductionCompanies";
+import Cast from "./components/Casts/Cast";
 const MovieDes = () => {
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
   const params = useParams();
@@ -162,6 +163,7 @@ const MovieDes = () => {
       </div>
 
       <ProductionCompanies/>
+      <Cast/>
     </div>
   );
 };
