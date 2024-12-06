@@ -23,7 +23,7 @@ const ProductionCompanies = () => {
 
     useEffect(()=>{
         getProductionImages()
-    },[])
+    },[movieID])
 
     
 

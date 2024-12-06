@@ -6,6 +6,7 @@ import imdb from "../../../assets/imdb.svg";
 import axios from "axios";
 import ProductionCompanies from "./components/Production/ProductionCompanies";
 import Cast from "./components/Casts/Cast";
+import SimilarMovies from "./components/SimilarMovies/SimilarMovies";
 const MovieDes = () => {
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
   const params = useParams();
@@ -59,7 +60,7 @@ const MovieDes = () => {
 
   useEffect(() => {
     getMovieDetail();
-  }, []);
+  }, [showID]);
 
   useEffect(() => {
     if (currentShow) {
@@ -164,6 +165,7 @@ const MovieDes = () => {
 
       <ProductionCompanies/>
       <Cast/>
+      <SimilarMovies/>
     </div>
   );
 };

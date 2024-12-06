@@ -31,7 +31,7 @@ const Cast = () => {
 
   useEffect(() => {
     getCast();
-  }, []);
+  }, [movieID]);
 
   return (
     <div className="`w-full h-fit">

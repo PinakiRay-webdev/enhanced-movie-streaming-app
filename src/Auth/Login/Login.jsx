@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import loginBg from "../../assets/loginBG.svg";
 import google from "../../assets/google.svg";
-import facebook from "../../assets/facebook.svg";
+import googlePlay from "../../assets/googlePlay.svg";
 import { PiEyesLight } from "react-icons/pi";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
@@ -14,8 +14,8 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
-import { auth , db } from "../../utils/Firebase/firebase";
+
+import { auth} from "../../utils/Firebase/firebase";
 
 const Login = () => {
   const {
@@ -212,8 +212,8 @@ const Login = () => {
                 <p>Log in with Google</p>
               </div>
               <div className="flex items-center bg-green-100 py-2 justify-center gap-5 border border-green-600 rounded-md mt-3 cursor-pointer">
-                <img className="w-8" src={facebook} alt="" />
-                <p>Log in with Facebook</p>
+                <img className="w-8" src={googlePlay} alt="" />
+                <p>Log in with Play Games</p>
               </div>
             </div>
 
