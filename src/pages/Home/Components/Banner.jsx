@@ -117,33 +117,35 @@ const Banner = () => {
   return (
     <div className='relative'>
         <p onClick={leftScroll} className='absolute z-10 text-white text-3xl top-[50%] left-4' ><FaChevronCircleLeft/></p>
-      <div ref={banner} className='banner h-screen flex overflow-scroll relative scroll-smooth' >
+      <div ref={banner} className='banner lg:h-[60vh] xl:h-screen flex overflow-scroll relative scroll-smooth' >
         {trendingShows?.map((Element , id) =>(
-          <div className='h-screen min-w-full' key={id} >
+          <div className='h-full min-w-full' key={id} >
             <img className='w-full h-full object-cover' src={`https://image.tmdb.org/t/p/original${Element.backdrop_path}`} alt="" />
-            <div className='banner-data absolute w-full h-screen top-0 flex items-center pl-16' >
+
+            {/* banner data box  */}
+            <div className='banner-data absolute w-full h-full top-0 flex items-center pl-16' >
               <div>
-              <img className='w-[25rem]' src={`https://image.tmdb.org/t/p/original${logos[Element.id]}`} alt="" />
-              <p className='text-gray-300 w-[35%] my-8' >
+              <img className='w-[15rem] lg:w-[25rem]' src={`https://image.tmdb.org/t/p/original${logos[Element.id]}`} alt="" />
+              <p className='text-gray-300 w-[45%] my-8 text-sm lg:text-base' >
                 {`${Element.overview}`.length > 300 ? `${Element.overview}`.slice(0 , 300) + "...more" : Element.overview}
               </p>
               <footer className='flex items-end gap-12' >
                 <div>
-                  <img className='w-8' src={imdb} alt="" />
+                  <img className='w-6 lg:w-8' src={imdb} alt="" />
                   <p className='text-amber-400 text-3xl font-semibold'>{`${Element.vote_average}`.slice(0 , 3)}<span className='text-white text-sm' > / 10</span> </p>
                 </div>
 
                 <div className='flex items-end gap-3'>
-                  <p className='text-amber-400 text-4xl' >
+                  <p className='text-amber-400 text-2xl lg:text-4xl' >
                   <CiCalendarDate />
                   </p>
-                  <p className='text-white font-semibold text-xl' >{`${Element.first_air_date || Element.release_date}`.slice(0,4)}</p>
+                  <p className='text-white font-semibold lg:text-xl' >{`${Element.first_air_date || Element.release_date}`.slice(0,4)}</p>
                 </div>
                 <div className='flex items-end gap-3'>
                   <p className='text-amber-400 font-semibold' >
                   Available in : 
                   </p>
-                  <p className='text-white font-semibold text-xl' >{`${Element.original_language}`.slice(0,4)}</p>
+                  <p className='text-white font-semibold lg:text-xl' >{`${Element.original_language}`.slice(0,4)}</p>
                 </div>
               </footer>
               <div className='flex gap-6 mt-8' >
