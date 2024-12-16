@@ -157,3 +157,18 @@ export const genres = [
       imgage : western, // Sienna
     },
   ];
+
+  export const showNavBAR = [
+    {
+      id : 1,
+      item : 'Episodes',
+    },
+    {
+      id : 2,
+      item : 'production and networks'
+    },
+    {
+      id : 3,
+      item : 'cast'
+    }
+  ]
