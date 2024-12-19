@@ -28,7 +28,6 @@ const Episode = () => {
   return (
     <div className="px-5">
       <div>
-        <h1 className="border-b text-amber-400 text-2xl pb-3">Episodes</h1>
 
         {episodeList?.map((Element, id) => (
           <div

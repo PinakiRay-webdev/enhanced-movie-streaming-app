@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSelector , useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import Progress from "../../../utils/Material UI/Progress Bar/Progress";
 import imdb from "../../../assets/imdb.svg";
@@ -7,6 +7,9 @@ import axios from "axios";
 import Season from "./components/Seasons/Season";
 import Episode from "./components/Episodes/Episode";
 import { resetSeason } from "../../../Redux/Slice/SeasonSlice";
+import { showNavBAR } from "../../../utils/Utils";
+import ShowCast from "./components/Casts/ShowCast";
+import Production_and_networks from "./components/Production_and_network/Production_and_networks";
 
 const TvShowDes = () => {
   const sidebarStatus = useSelector((state) => state.sidebar.isOpen);
@@ -21,6 +24,11 @@ const TvShowDes = () => {
   const [currentShow, setCurrentShow] = useState({});
   const [titleImgLink, setTitleImgLink] = useState({});
   const [genres, setGenres] = useState([]);
+  const [activeSector, setActiveSector] = useState("episodes");
+
+  const toggleActiveSector = (sector) => {
+    setActiveSector(sector);
+  };
 
   const getMovieDetail = async () => {
     try {
@@ -71,9 +79,9 @@ const TvShowDes = () => {
     }
   }, [currentShow]);
 
-  useEffect(()=>{
-    dispatch(resetSeason())
-  },[])
+  useEffect(() => {
+    dispatch(resetSeason());
+  }, []);
 
   return (
     <div
@@ -176,14 +184,29 @@ const TvShowDes = () => {
       </div>
 
       {/* seasons section  */}
-      <Season/>
-      
-      {/* episodes section  */}
-      <Episode/>
-      {/* navigation bar  */}
-      <div>
+      <Season />
 
+      {/* navigation bar */}
+      <div className="flex justify-between mx-5 border-b pb-3">
+        {showNavBAR?.map((Element, id) => (
+          <p
+            onClick={() => toggleActiveSector(Element.item)}
+            key={id}
+            className="text-gray-300 capitalize text-2xl cursor-pointer"
+          >
+            {Element.item}
+          </p>
+        ))}
       </div>
+
+      {/* episode section  */}
+      {activeSector === "episodes" && <Episode />}
+
+      {/* cast section  */}
+      {activeSector === "cast" && <ShowCast />}
+
+      {/* production and network section  */}
+      {activeSector === "production and networks" && <Production_and_networks />}
     </div>
   );
 };

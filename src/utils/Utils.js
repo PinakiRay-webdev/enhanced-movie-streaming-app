@@ -161,7 +161,7 @@ export const genres = [
   export const showNavBAR = [
     {
       id : 1,
-      item : 'Episodes',
+      item : 'episodes',
     },
     {
       id : 2,

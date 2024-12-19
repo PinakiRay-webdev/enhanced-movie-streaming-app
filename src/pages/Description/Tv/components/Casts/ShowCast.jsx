@@ -9,14 +9,14 @@ const ShowCast = () => {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   const api_key = import.meta.env.VITE_API_KEY;
   const params = useParams();
-  const movieID = params.id;
+  const showID = params.id;
   const [casts, setCasts] = useState([]);
   const [length, setLength] = useState(false);
 
   const getCast = async () => {
     try {
       const response = await axios.get(
-        `${baseUrl}/movie/${movieID}/credits?api_key=${api_key}`
+        `${baseUrl}/tv/${showID}/credits?api_key=${api_key}`
       );
       const data = response.data.cast;
       setCasts(data);
@@ -31,16 +31,13 @@ const ShowCast = () => {
 
   useEffect(() => {
     getCast();
-  }, [movieID]);
+  }, [showID]);
 
   return (
     <div className="`w-full h-fit">
-      <div className="max-w-screen-xl pb-8 my-8 mx-auto relative">
-        <h1 className="text-white text-4xl font-sans font-extralight border-b border-zinc-400">
-          Casts
-        </h1>
-        <div className="grid grid-cols-3  gap-7 py-12">
-          {casts.slice(0, `${length ? casts.length : "6"}` ).map((Element, id) => (
+      <div className="pb-8 mx-auto relative">
+        <div className="grid grid-cols-4 gap-7 py-12 px-8">
+          {casts.slice(0, `${length ? casts.length : "8"}` ).map((Element, id) => (
             <div className="flex gap-4 items-end" key={id}>
               <div className="w-24 h-24">
                 {Element.profile_path !== null ? (
